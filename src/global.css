@@ -1,0 +1,46 @@
+
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;700&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+
+@layer base {
+    :root {
+      --padding-inline-desktop: 24px;
+      --padding-inline-tablet: 24px;
+      --padding-inline-mobile: 24px;
+      --content-max-width: 115rem;
+      --breakout-max-width: 135rem;
+      --breakout-size: calc((var(--breakout-max-width) - var(--content-max-width)) / 2);
+    }
+  
+    html, body {
+      font-family: 'Poppins', system-ui, sans-serif;
+      background-color: #f2f2f2;
+      scrollbar-width: thin;
+      scrollbar-color: #de2f74 #f0f0f0;
+      overflow: hidden;
+    }
+
+    ::-webkit-scrollbar {
+      width: 4px; /* Adjust scrollbar width */
+    }
+    
+    ::-webkit-scrollbar-thumb {
+      background-color: #de2f74;
+      border-radius: 10px;
+    }
+    
+    ::-webkit-scrollbar-track {
+      background: transparent /* Light background for the scrollbar track */
+    }
+}
+
+@layer components {
+    .global-main-grid-layout {
+      @apply grid grid-cols-mobile-layout md:grid-cols-tablet-layout xl:grid-cols-desktop-layout;
+    }
+}
+  
