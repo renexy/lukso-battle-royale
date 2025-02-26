@@ -17,20 +17,30 @@
     }
   
     html, body {
-      font-family: 'Poppins', system-ui, sans-serif;
-      background-color: #f2f2f2;
+      font-family: 'Inter', system-ui, sans-serif;
+      background-color: #9EC3E6;
+      background-image: url('./assets/flowers.png');
       scrollbar-width: thin;
-      scrollbar-color: #de2f74 #f0f0f0;
+      scrollbar-color: #CB6CE6;
+      background-size: cover;
+      background-position: center center;
+      background-repeat: no-repeat;
       overflow: hidden;
+      height: 100dvh;
+      width: 100dvw;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
     }
 
     ::-webkit-scrollbar {
-      width: 4px; /* Adjust scrollbar width */
+      width: 3px; /* Adjust scrollbar width */
     }
     
     ::-webkit-scrollbar-thumb {
-      background-color: #de2f74;
-      border-radius: 10px;
+      background-color: #CB6CE6;
+      border-radius: 0;
     }
     
     ::-webkit-scrollbar-track {
