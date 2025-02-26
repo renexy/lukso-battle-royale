@@ -37,7 +37,7 @@ const QuestionsAccordion: React.FC<QuestionsAccordionProps> = ({
         ))}
 
       {answeredQuestions.length < 1 && <div className="flex justify-center items-center w-full h-full">
-        <span className="text-[#4F5882] font-bold text-[12px]">User has no questions yet.</span></div>}
+        <span className="text-[#4F5882] font-bold text-[12px]">User hasn't anwsered any questions yet.</span></div>}
     </div>
   );
 };
