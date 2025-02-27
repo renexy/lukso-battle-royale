@@ -34,7 +34,7 @@ export const hasSubmittedQuestion = async (provider: any, account: any) => {
     return decodedResult
   } catch (error) {
     console.error("Error fetching public questions:", error);
-    return -1;
+    return true
   }
 };
 
@@ -51,15 +51,11 @@ export const fetchPublicQuestions = async (provider: any) => {
       functionName: 'getAllQuestions',
       args: [],
     });
-
-    console.log(contractAddress, 'lol!')
     
     const result = await client.call({
       to: contractAddress as `0x${string}`,
       data: data,
     });
-
-    console.log(result, 'reuslt')
 
     const decodedResult = decodeFunctionResult({
       abi: abi.abi,
@@ -115,13 +111,13 @@ export const submitQuestion = async (walletClient: any, account: any, question: 
 
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-export const answerQuestion = async (account: any, answer: string, walletClient: any) => {
+export const answerQuestion = async (account: any, answer: string, questionId: number, walletClient: any) => {
   try {
     const txHash = await walletClient.writeContract({
       address: contractAddress as `0x${string}`,
       abi: abi.abi,
-      functionName: "submitQuestion",
-      args: [answer],
+      functionName: "answerQuestion",
+      args: [questionId, answer],
       account: account,
     });
     console.log("Transaction Hash:", txHash);

@@ -1,28 +1,49 @@
-import { CircularProgress } from "@mui/material";
 import { useEffect, useState } from "react";
 import { useUpProvider } from "./services/providers/UPProvider";
-import { fetchPublicQuestions } from "./services/web3/Interactions";
-import QuestionsAccordion from "./components/QuestionsAccordion";
+import {
+  fetchPublicQuestions,
+  hasSubmittedQuestion,
+} from "./services/web3/Interactions";
+import { Question } from "./models/Question.model";
+import { CircularProgress } from "@mui/material";
 import OwnerDashboard from "./components/OwnerDashboard";
+import QuestionsAccordion from "./components/QuestionsAccordion";
 
 function App() {
   const { accounts, contextAccounts, provider } = useUpProvider();
-  const [allQuestions, setAllQuestions] = useState([]);
+  const [isUserOwner, setIsUserOwner] = useState(false);
+  const [allQuestions, setAllQuestions] = useState<Question[]>([]);
+  const [alreadyAsked, setAlreadyAsked] = useState<boolean>(true);
   const [ready, setReady] = useState(false);
 
   useEffect(() => {
     const fetchQuestions = async () => {
-      const questions = await fetchPublicQuestions(provider);
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      setAllQuestions(questions as any);
+      let questions = (await fetchPublicQuestions(provider)) as Question[];
+      questions = questions.map((item: Question, index: number) => ({
+        ...item,
+        id: index + 1,
+      }));
       setReady(true);
-      setIsVisible(true);
+      setAllQuestions(questions);
     };
 
     fetchQuestions();
   }, [provider]);
 
-  const isUserOwner = () => {
+  useEffect(() => {
+    const checkUserStatus = async () => {
+      checkIsUserOwner(accounts, contextAccounts);
+      await checkUserAlreadyAsked(accounts);
+      setReady(true);
+    };
+
+    setReady(false);
+    checkUserStatus();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [accounts, contextAccounts]);
+
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const checkIsUserOwner = (accounts: any, contextAccounts: any) => {
     if (
       contextAccounts &&
       contextAccounts.length > 0 &&
@@ -30,8 +51,16 @@ function App() {
       accounts.length > 0 &&
       contextAccounts[0].toLowerCase() === accounts[0].toLowerCase()
     )
-      return true;
-    return false;
+      setIsUserOwner(true);
+    else {
+      setIsUserOwner(false);
+    }
+  };
+
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const checkUserAlreadyAsked = async (accounts: any) => {
+    const hasAsked = await hasSubmittedQuestion(provider, accounts[0]) as boolean;
+    setAlreadyAsked(hasAsked)
   };
 
   if (!ready) {
@@ -42,17 +71,17 @@ function App() {
     );
   }
 
-  if (isUserOwner()) {
+  if (isUserOwner) {
     return (
       <div className="bg-white bg-opacity-95 shadow-lg p-5 rounded-lg h-[600px] w-[400px] relative">
-        <OwnerDashboard questions={allQuestions}/>
+        <OwnerDashboard questions={allQuestions} />
       </div>
     );
   }
 
   return (
     <div className="bg-white bg-opacity-95 shadow-lg p-5 rounded-lg h-[600px] w-[400px] relative">
-      <QuestionsAccordion questions={allQuestions}></QuestionsAccordion>
+      <QuestionsAccordion questions={allQuestions} alreadyAsked={alreadyAsked}></QuestionsAccordion>
     </div>
   );
 }

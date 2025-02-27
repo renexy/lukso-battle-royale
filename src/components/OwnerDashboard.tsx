@@ -4,18 +4,20 @@ import {
   AccordionSummary,
   Button,
   Input,
-  Typography,
 } from "@mui/material";
 import QuestionAnswerIcon from "@mui/icons-material/QuestionAnswer";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import { useState } from "react";
+import { Question } from "../models/Question.model";
+import { answerQuestion, claimToken } from "../services/web3/Interactions";
+import { useUpProvider } from "../services/providers/UPProvider";
 
 interface OwnerDashboardProps {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  questions: any[];
+  questions: Question[];
 }
 
 const OwnerDashboard: React.FC<OwnerDashboardProps> = ({ questions }) => {
+  const { accounts, client } = useUpProvider();
   const [showUnanwsered, setShowUnanwsered] = useState<boolean>(true);
   const [answer, setAnswer] = useState<string>("");
   const [myQuestions, setMyQuestions] = useState(
@@ -29,9 +31,19 @@ const OwnerDashboard: React.FC<OwnerDashboardProps> = ({ questions }) => {
     );
   };
 
-  const submitAnswer = (question: any) => {
-    console.log(question, 'lol')
-  }
+  const submitAnswer = async (question: Question) => {
+    const res = await answerQuestion(accounts[0], answer, question.id, client);
+    if (res === 1) {
+      console.log("YAY!?);");
+    } else {
+      console.log("NAY");
+    }
+  };
+
+  const claimFreeToken = async () => {
+    const res = await claimToken(client, accounts[0]);
+    console.log(res, "lol");
+  };
 
   return (
     <div className="p-4 flex flex-col justify-center items-center w-full h-full">
@@ -55,27 +67,35 @@ const OwnerDashboard: React.FC<OwnerDashboardProps> = ({ questions }) => {
               </AccordionSummary>
               <AccordionDetails>
                 <div className="flex flex-col w-full h-full gap-[6px]">
-                  <Input
-                    placeholder="Anwser here"
-                    color="secondary"
-                    className="w-full"
-                    onChange={(e) => setAnswer(e.target.value)}
-                    sx={{ color: "#4F5882" }}
-                  ></Input>
-                  <Button
-                    startIcon={<QuestionAnswerIcon />}
-                    variant="contained"
-                    color="secondary"
-                    size="small"
-                    onClick={() => submitAnswer(question)}
-                    sx={{
-                      "&:hover": {
-                        backgroundColor: "#CB6CE6",
-                      },
-                    }}
-                  >
-                    Submit anwser
-                  </Button>
+                  {question.answerText ? (
+                    <span className="text-[#4F5882] text-[12px]">
+                      {question.answerText}
+                    </span>
+                  ) : (
+                    <>
+                      <Input
+                        placeholder="Anwser here"
+                        color="secondary"
+                        className="w-full"
+                        onChange={(e) => setAnswer(e.target.value)}
+                        sx={{ color: "#4F5882" }}
+                      ></Input>
+                      <Button
+                        startIcon={<QuestionAnswerIcon />}
+                        variant="contained"
+                        color="secondary"
+                        size="small"
+                        onClick={() => submitAnswer(question)}
+                        sx={{
+                          "&:hover": {
+                            backgroundColor: "#CB6CE6",
+                          },
+                        }}
+                      >
+                        Submit anwser
+                      </Button>
+                    </>
+                  )}
                 </div>
               </AccordionDetails>
             </Accordion>
@@ -96,6 +116,8 @@ const OwnerDashboard: React.FC<OwnerDashboardProps> = ({ questions }) => {
         >
           Browse {showUnanwsered ? "unanwsered" : "anwsered"}
         </Button>
+        
+        <span onClick={claimFreeToken}>test</span>
       </div>
     </div>
   );
