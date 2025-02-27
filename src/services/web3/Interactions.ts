@@ -39,6 +39,39 @@ export const hasSubmittedQuestion = async (provider: any, account: any) => {
 };
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
+export const getFQTAmount = async (provider: any, account: any) => {
+  try {
+    const client = createPublicClient({
+      chain: luksoTestnet, 
+      transport: custom(provider),
+    });
+
+    const data = encodeFunctionData({
+      abi: abi.abi,
+      functionName: 'getFQTBalance',
+      args: [account],
+    });
+    
+    const result = await client.call({
+      to: contractAddress as `0x${string}`,
+      data: data,
+    });
+
+    const decodedResult = decodeFunctionResult({
+      abi: abi.abi,
+      functionName: 'getFQTBalance',
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      data: (result.data as any).result as `0x${string}`
+    });
+
+    return decodedResult
+  } catch (error) {
+    console.error("Error fetching FQT amount:", error);
+    return true
+  }
+};
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export const fetchPublicQuestions = async (provider: any) => {
   try {
     const client = createPublicClient({

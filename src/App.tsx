@@ -2,7 +2,6 @@ import { useEffect, useState } from "react";
 import { useUpProvider } from "./services/providers/UPProvider";
 import {
   fetchPublicQuestions,
-  hasSubmittedQuestion,
 } from "./services/web3/Interactions";
 import { Question } from "./models/Question.model";
 import { CircularProgress } from "@mui/material";
