@@ -1,12 +1,25 @@
-import { CircularProgress } from "@mui/material";
+import { Button, CircularProgress, Input, Tooltip } from "@mui/material";
 import useFQTInfo from "./SubmitQuestion.hooks";
+import ArrowBackIcon from "@mui/icons-material/ArrowBack";
+import CasinoIcon from "@mui/icons-material/Casino";
 
 interface UserDashboardProps {
-    toggleView: () => void;
+  toggleView: () => void;
 }
 
 const UserDashboard: React.FC<UserDashboardProps> = ({ toggleView }) => {
-  const { accounts, loading, fqtAmount, alreadyAskedQuestion } = useFQTInfo();
+  const {
+    accounts,
+    loading,
+    fqtAmount,
+    alreadyAskedQuestion,
+    receiveToken,
+    disableInteractions,
+    question,
+    setQuestion,
+    canAsk,
+    askQuestion
+  } = useFQTInfo();
 
   return (
     <div className="flex flex-col justify-center items-center w-full h-full animate-fadeInSlideUp">
@@ -31,20 +44,79 @@ const UserDashboard: React.FC<UserDashboardProps> = ({ toggleView }) => {
             </div>
           )}
 
-          {/* 3.) If all conditions are met, display token balance - explain to user how FQT works */}
-          {/* make these descriptions better, if he has 0 tokens and has yet asked, instruct to mint a token */}
-          {accounts && accounts.length > 0 && !loading && (
-            <div className="flex flex-col h-full w-full gap-[14px] justify-center items-center">
-              {!alreadyAskedQuestion && (
+          {/* 3.) If user already asked his question, end the process */}
+          {accounts &&
+            accounts.length > 0 &&
+            !loading &&
+            alreadyAskedQuestion && (
+              <div className="flex flex-col h-full w-full gap-[14px] justify-center items-center">
                 <span className="text-[#4F5882] text-[12px]">
+                  You already asked this user one question.
+                </span>
+              </div>
+            )}
+
+          {accounts &&
+            accounts.length > 0 &&
+            !loading &&
+            !alreadyAskedQuestion && (
+              <div className="flex flex-col h-full w-full gap-[14px] justify-center items-center">
+                <span className="text-[#4F5882] text-[12px] mb-[24px]">
                   You can only ask this user <b>one</b> question. Make it count!
                 </span>
-              )}
-              <span className="text-[#4F5882] text-[12px]">
-                Your number of tokens: {fqtAmount}
-              </span>
-            </div>
-          )}
+                <Input
+                  placeholder="Ask away"
+                  color="secondary"
+                  value={question}
+                  className="w-full"
+                  onChange={(e) => setQuestion(e.target.value)}
+                  sx={{ color: "#4F5882" }}
+                ></Input>
+                <span className="text-[#4F5882] text-[12px] mt-[24px]">
+                  Your number of tokens: {fqtAmount}
+                </span>
+                <Button
+                  startIcon={<CasinoIcon />}
+                  variant="contained"
+                  color="secondary"
+                  disabled={!canAsk}
+                  onClick={askQuestion}
+                  sx={{
+                    "&:hover": {
+                      backgroundColor: "#CB6CE6",
+                    },
+                  }}
+                >
+                  Ask me a question!
+                </Button>
+                <Tooltip
+                  color="secondary"
+                  arrow
+                  title={
+                    disableInteractions
+                      ? "You already minted a token"
+                      : "Click to receive a question token!"
+                  }
+                >
+                  <span>
+                    <Button
+                      startIcon={<CasinoIcon />}
+                      variant="contained"
+                      color="secondary"
+                      disabled={disableInteractions}
+                      onClick={receiveToken}
+                      sx={{
+                        "&:hover": {
+                          backgroundColor: "#CB6CE6",
+                        },
+                      }}
+                    >
+                      Get a free question token! ❤️
+                    </Button>
+                  </span>
+                </Tooltip>
+              </div>
+            )}
         </div>
       </div>
 
@@ -52,7 +124,19 @@ const UserDashboard: React.FC<UserDashboardProps> = ({ toggleView }) => {
         className="flex justify-center items-center w-full h-full flex-col gap-[12px] flex-[0.2]"
         onClick={toggleView}
       >
-        claim
+        <Button
+          startIcon={<ArrowBackIcon />}
+          variant="contained"
+          color="secondary"
+          onClick={toggleView}
+          sx={{
+            "&:hover": {
+              backgroundColor: "#CB6CE6",
+            },
+          }}
+        >
+          Back to questions
+        </Button>
       </div>
     </div>
   );

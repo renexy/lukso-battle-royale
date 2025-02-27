@@ -40,7 +40,7 @@ const UserDashboard: React.FC<UserdashboardProps> = ({ questions }) => {
             </span>
             {answeredQuestions.length > 0 &&
               answeredQuestions.map((question, index) => (
-                <Accordion key={index}>
+                <Accordion key={index} className="w-full">
                   <AccordionSummary
                     expandIcon={<ExpandMoreIcon />}
                     aria-controls={`panel${index}-content`}

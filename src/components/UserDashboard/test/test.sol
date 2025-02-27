@@ -3,7 +3,7 @@ pragma solidity ^0.8.19;
 
 import "@lukso/lsp7-contracts/contracts/LSP7DigitalAsset.sol";
 
-contract SimpleAMA is LSP7DigitalAsset {
+contract MultiProfileAMA is LSP7DigitalAsset {
     struct Question {
         address sender;
         string questionText;
@@ -21,9 +21,9 @@ contract SimpleAMA is LSP7DigitalAsset {
 
     mapping(address => Profile) public profiles;
 
-    constructor(
-        address owner
-    ) LSP7DigitalAsset("Free Question Token", "FQT", msg.sender, 0, false) {}
+    constructor()
+        LSP7DigitalAsset("Free Question Token", "FQT", msg.sender, 0, false)
+    {}
 
     // Create a new profile for the caller
     function createProfile() external {
@@ -126,14 +126,5 @@ contract SimpleAMA is LSP7DigitalAsset {
 
     function hasProfile(address user) external view returns (bool) {
         return profiles[user].owner != address(0);
-    }
-
-    function hasReceivedToken(
-        address _profileOwner,
-        address user
-    ) external view returns (bool) {
-        Profile storage profile = profiles[_profileOwner];
-        require(profile.owner != address(0), "Profile does not exist");
-        return profile.hasReceivedToken[user];
     }
 }

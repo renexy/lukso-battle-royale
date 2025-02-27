@@ -10,14 +10,26 @@ import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import { useState } from "react";
 import { useUpProvider } from "../../services/providers/UPProvider";
 import { Question } from "../../models/Question.model";
-import { answerQuestion, claimToken } from "../../services/web3/Interactions";
+import {
+  answerQuestion,
+  answerQuestionForProfile,
+  claimToken,
+  claimTokenForProfile,
+  createQuestionForProfile,
+  hasRecievedTokenForProfile,
+} from "../../services/web3/Interactions";
 
 interface OwnerDashboardProps {
   questions: Question[];
+  disableInteractions: boolean;
 }
 
-const OwnerDashboard: React.FC<OwnerDashboardProps> = ({ questions }) => {
-  const { accounts, client } = useUpProvider();
+const OwnerDashboard: React.FC<OwnerDashboardProps> = ({
+  questions,
+  disableInteractions,
+}) => {
+  const { accounts, client, contextAccounts, provider, chainId } =
+    useUpProvider();
   const [showUnanwsered, setShowUnanwsered] = useState<boolean>(true);
   const [answer, setAnswer] = useState<string>("");
   const [myQuestions, setMyQuestions] = useState(
@@ -32,7 +44,12 @@ const OwnerDashboard: React.FC<OwnerDashboardProps> = ({ questions }) => {
   };
 
   const submitAnswer = async (question: Question) => {
-    const res = await answerQuestion(accounts[0], answer, question.id, client);
+    const res = await answerQuestionForProfile(
+      accounts[0],
+      answer,
+      question.id,
+      client
+    );
     if (res === 1) {
       console.log("YAY!?);");
     } else {
@@ -41,8 +58,26 @@ const OwnerDashboard: React.FC<OwnerDashboardProps> = ({ questions }) => {
   };
 
   const claimFreeToken = async () => {
-    const res = await claimToken(client, accounts[0]);
-    console.log(res, "lol");
+    const received = await hasRecievedTokenForProfile(
+      provider,
+      accounts[0],
+      contextAccounts[0],
+      chainId
+    );
+    if (received) {
+      alert("You already claimed a free token!");
+    }
+    await claimTokenForProfile(client, accounts[0], contextAccounts[0]);
+  };
+
+  const submitQuestion = async () => {
+    const received = await createQuestionForProfile(
+      accounts[0],
+      client,
+      contextAccounts[0],
+      "test question"
+    );
+    console.log(received, "lol?");
   };
 
   return (
@@ -55,7 +90,7 @@ const OwnerDashboard: React.FC<OwnerDashboardProps> = ({ questions }) => {
         </span>
         {myQuestions.length > 0 &&
           myQuestions.map((question, index) => (
-            <Accordion key={index}>
+            <Accordion key={index} className="w-full">
               <AccordionSummary
                 expandIcon={<ExpandMoreIcon />}
                 aria-controls={`panel${index}-content`}
@@ -77,6 +112,7 @@ const OwnerDashboard: React.FC<OwnerDashboardProps> = ({ questions }) => {
                         placeholder="Anwser here"
                         color="secondary"
                         className="w-full"
+                        value={answer}
                         onChange={(e) => setAnswer(e.target.value)}
                         sx={{ color: "#4F5882" }}
                       ></Input>
@@ -107,6 +143,8 @@ const OwnerDashboard: React.FC<OwnerDashboardProps> = ({ questions }) => {
           startIcon={<QuestionAnswerIcon />}
           variant="contained"
           color="secondary"
+          disabled={disableInteractions}
+          loading={disableInteractions}
           onClick={toggleQuestionType}
           sx={{
             "&:hover": {
@@ -116,8 +154,9 @@ const OwnerDashboard: React.FC<OwnerDashboardProps> = ({ questions }) => {
         >
           Browse {showUnanwsered ? "unanwsered" : "anwsered"}
         </Button>
-        
+
         <span onClick={claimFreeToken}>test</span>
+        <span onClick={submitQuestion}>test2</span>
       </div>
     </div>
   );
