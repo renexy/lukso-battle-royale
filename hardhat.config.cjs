@@ -8,12 +8,12 @@ module.exports = {
     luksoTestnet: {
       url: 'https://rpc.testnet.lukso.network',
       chainId: 4201,
-      accounts: process.env.LUKSO_TESTNET_PRIVATE_KEY ? [process.env.LUKSO_TESTNET_PRIVATE_KEY] : [],
+      accounts: process.env.LUKSO_PRIVATE_KEY ? [process.env.LUKSO_PRIVATE_KEY] : [],
     },
     luksoMainnet: {
       url: 'https://42.rpc.thirdweb.com',
       chainId: 42,
-      accounts: process.env.LUKSO_TESTNET_PRIVATE_KEY ? [process.env.LUKSO_TESTNET_PRIVATE_KEY] : [],
+      accounts: process.env.LUKSO_PRIVATE_KEY ? [process.env.LUKSO_PRIVATE_KEY] : [],
     },
   },
   etherscan: {

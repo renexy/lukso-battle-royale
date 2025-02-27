@@ -82,4 +82,9 @@ contract SimpleAMA is LSP7DigitalAsset {
         }
         return false;
     }
+
+    // token balance of user
+    function getFQTBalance(address user) public view returns (uint256) {
+        return balanceOf(user);
+    }
 }

@@ -6,14 +6,13 @@ import {
 } from "./services/web3/Interactions";
 import { Question } from "./models/Question.model";
 import { CircularProgress } from "@mui/material";
-import OwnerDashboard from "./components/OwnerDashboard";
-import QuestionsAccordion from "./components/QuestionsAccordion";
+import UserDashboard from "./components/UserDashboard/Dashboard";
+import OwnerDashboard from "./components/OwnerDashboard/OwnerDashboard";
 
 function App() {
   const { accounts, contextAccounts, provider } = useUpProvider();
   const [isUserOwner, setIsUserOwner] = useState(false);
   const [allQuestions, setAllQuestions] = useState<Question[]>([]);
-  const [alreadyAsked, setAlreadyAsked] = useState<boolean>(true);
   const [ready, setReady] = useState(false);
 
   useEffect(() => {
@@ -23,23 +22,15 @@ function App() {
         ...item,
         id: index + 1,
       }));
-      setReady(true);
       setAllQuestions(questions);
+      setReady(true);
     };
 
     fetchQuestions();
   }, [provider]);
 
   useEffect(() => {
-    const checkUserStatus = async () => {
       checkIsUserOwner(accounts, contextAccounts);
-      await checkUserAlreadyAsked(accounts);
-      setReady(true);
-    };
-
-    setReady(false);
-    checkUserStatus();
-  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [accounts, contextAccounts]);
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -55,12 +46,6 @@ function App() {
     else {
       setIsUserOwner(false);
     }
-  };
-
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const checkUserAlreadyAsked = async (accounts: any) => {
-    const hasAsked = await hasSubmittedQuestion(provider, accounts[0]) as boolean;
-    setAlreadyAsked(hasAsked)
   };
 
   if (!ready) {
@@ -81,7 +66,7 @@ function App() {
 
   return (
     <div className="bg-white bg-opacity-95 shadow-lg p-5 rounded-lg h-[600px] w-[400px] relative">
-      <QuestionsAccordion questions={allQuestions} alreadyAsked={alreadyAsked}></QuestionsAccordion>
+      <UserDashboard questions={allQuestions}></UserDashboard>
     </div>
   );
 }

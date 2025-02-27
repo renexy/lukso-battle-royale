@@ -2,8 +2,8 @@
   "_format": "hh-sol-cache-2",
   "files": {
     "C:\\work\\lukso-ama\\contracts\\ama.sol": {
-      "lastModificationDate": 1740597497744,
-      "contentHash": "b08dfb1d3752906081824735c52dfde3",
+      "lastModificationDate": 1740662123697,
+      "contentHash": "9d35eaa1ed7fc4941e1f2668b7ba17f4",
       "sourceName": "contracts/ama.sol",
       "solcConfig": {
         "version": "0.8.19",

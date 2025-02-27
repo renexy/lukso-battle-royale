@@ -8,9 +8,9 @@ import {
 import QuestionAnswerIcon from "@mui/icons-material/QuestionAnswer";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import { useState } from "react";
-import { Question } from "../models/Question.model";
-import { answerQuestion, claimToken } from "../services/web3/Interactions";
-import { useUpProvider } from "../services/providers/UPProvider";
+import { useUpProvider } from "../../services/providers/UPProvider";
+import { Question } from "../../models/Question.model";
+import { answerQuestion, claimToken } from "../../services/web3/Interactions";
 
 interface OwnerDashboardProps {
   questions: Question[];

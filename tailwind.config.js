@@ -34,7 +34,16 @@ export default {
         "full-width": "full-width-start / full-width-end",
         content: "content-start / content-end",
         breakout: "breakout-start / breakout-end"
-      }
+      },
+      animation: {
+        fadeInSlideUp: "fadeInSlideUp 0.5s ease-out",
+      },
+      keyframes: {
+        fadeInSlideUp: {
+          "0%": { opacity: 0, transform: "translateY(20px)" },
+          "100%": { opacity: 1, transform: "translateY(0)" },
+        },
+      },
     },
   },
   plugins: [],

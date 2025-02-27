@@ -33,7 +33,7 @@ export const hasSubmittedQuestion = async (provider: any, account: any) => {
 
     return decodedResult
   } catch (error) {
-    console.error("Error fetching public questions:", error);
+    console.error("Error fetching already submitted check:", error);
     return true
   }
 };
