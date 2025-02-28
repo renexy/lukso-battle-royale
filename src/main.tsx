@@ -1,4 +1,3 @@
-import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
 import "./global.css";
 import App from "./App.tsx";
@@ -18,11 +17,9 @@ const theme = createTheme({
   },
 });
 createRoot(document.getElementById("root")!).render(
-  <StrictMode>
-      <UpProvider>
-          <ThemeProvider theme={theme}>
-            <App />
-          </ThemeProvider>
-      </UpProvider>
-  </StrictMode>
+  <UpProvider>
+    <ThemeProvider theme={theme}>
+      <App />
+    </ThemeProvider>
+  </UpProvider>
 );

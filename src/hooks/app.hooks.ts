@@ -1,17 +1,24 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable react-hooks/exhaustive-deps */
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { Question } from "../models/Question.model";
 import { useUpProvider } from "../services/providers/UPProvider";
-import { createProfileForUser, fetchQuestionsForProfile, hasProfile } from "../services/web3/Interactions";
+import {
+  createProfileForUser,
+  fetchQuestionsForProfile,
+  hasProfile,
+} from "../services/web3/Interactions";
 
 export const useApp = () => {
-const { accounts, contextAccounts, provider, client, chainId } =
+  const { accounts, contextAccounts, provider, client, chainId } =
     useUpProvider();
   const [isUserOwner, setIsUserOwner] = useState(false);
   const [allQuestions, setAllQuestions] = useState<Question[]>([]);
   const [ready, setReady] = useState(false);
   const [disableInteractions, setDisableInteractions] = useState(true);
+  const [skipCreate, setSkipCreate] = useState<boolean>(false);
+
+  const hasCheckedProfile = useRef(false);
 
   useEffect(() => {
     const fetchQuestions = async () => {
@@ -55,13 +62,18 @@ const { accounts, contextAccounts, provider, client, chainId } =
   }, [accounts, contextAccounts]);
 
   const checkOwnerHasProfile = async () => {
+    if (hasCheckedProfile.current) return;
+    hasCheckedProfile.current = true;
     const userHasProfile = await hasProfile(provider, accounts[0], chainId);
     if (userHasProfile) {
       setDisableInteractions(false);
       return;
     }
 
-    await createProfileForUser(accounts[0], client, chainId);
+    if (!skipCreate) {
+      setSkipCreate(true);
+      await createProfileForUser(accounts[0], client, chainId);
+    }
     setDisableInteractions(false);
   };
 
@@ -79,7 +91,7 @@ const { accounts, contextAccounts, provider, client, chainId } =
     setAllQuestions(questions);
     setReady(true);
   };
-  
+
   return {
     isUserOwner,
     allQuestions,
