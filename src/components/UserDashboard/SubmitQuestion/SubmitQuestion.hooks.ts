@@ -5,7 +5,7 @@ import {
   createQuestionForProfile,
   getFQTAmount,
   hasRecievedTokenForProfile,
-  hasSubmittedQuestionForProfile,
+  hasSubmittedQuestionForProfile
 } from "../../../services/web3/Interactions";
 import { useUpProvider } from "../../../services/providers/UPProvider";
 

@@ -7,90 +7,44 @@ import {
 } from "@mui/material";
 import QuestionAnswerIcon from "@mui/icons-material/QuestionAnswer";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
-import { useState } from "react";
-import { useUpProvider } from "../../services/providers/UPProvider";
 import { Question } from "../../models/Question.model";
-import {
-  answerQuestion,
-  answerQuestionForProfile,
-  claimToken,
-  claimTokenForProfile,
-  createQuestionForProfile,
-  hasRecievedTokenForProfile,
-} from "../../services/web3/Interactions";
+import useOwnerDashboard from "./OwnerDashboard.hooks";
 
 interface OwnerDashboardProps {
   questions: Question[];
   disableInteractions: boolean;
+  loadQuestions: () => void;
 }
 
 const OwnerDashboard: React.FC<OwnerDashboardProps> = ({
   questions,
   disableInteractions,
+  loadQuestions,
 }) => {
-  const { accounts, client, contextAccounts, provider, chainId } =
-    useUpProvider();
-  const [showUnanwsered, setShowUnanwsered] = useState<boolean>(true);
-  const [answer, setAnswer] = useState<string>("");
-  const [myQuestions, setMyQuestions] = useState(
-    questions.filter((q) => q.answered)
-  );
-
-  const toggleQuestionType = () => {
-    setShowUnanwsered(!showUnanwsered);
-    setMyQuestions(
-      questions.filter((q) => (showUnanwsered ? !q.answered : q.answered))
-    );
-  };
-
-  const submitAnswer = async (question: Question) => {
-    const res = await answerQuestionForProfile(
-      accounts[0],
-      answer,
-      question.id,
-      client
-    );
-    if (res === 1) {
-      console.log("YAY!?);");
-    } else {
-      console.log("NAY");
-    }
-  };
-
-  const claimFreeToken = async () => {
-    const received = await hasRecievedTokenForProfile(
-      provider,
-      accounts[0],
-      contextAccounts[0],
-      chainId
-    );
-    if (received) {
-      alert("You already claimed a free token!");
-    }
-    await claimTokenForProfile(client, accounts[0], contextAccounts[0]);
-  };
-
-  const submitQuestion = async () => {
-    const received = await createQuestionForProfile(
-      accounts[0],
-      client,
-      contextAccounts[0],
-      "test question"
-    );
-    console.log(received, "lol?");
-  };
+  const {
+    showUnanwsered,
+    myQuestions,
+    answer,
+    setAnswer,
+    toggleQuestionType,
+    submitAnswer,
+    isSubmitting,
+  } = useOwnerDashboard({
+    questions: questions,
+    loadQuestions: loadQuestions,
+  });
 
   return (
     <div className="p-4 flex flex-col justify-center items-center w-full h-full">
-      <div className=" max-h-[90%] overflow-auto flex flex-col gap-[12px] items-center w-full h-full flex-[0.8]">
-        <span className="text-[#4F5882] font-bold text-[12px]">
+      <div className=" max-h-[90%] overflow-auto flex flex-col gap-[12px] items-center w-full h-full flex-[0.8] animate-fadeInSlideUp">
+        <span className="text-[#4F5882] font-bold text-[12px] animate-fadeInSlideUp">
           {showUnanwsered
             ? "Your answered questions"
             : "Your unanwsered questions"}
         </span>
         {myQuestions.length > 0 &&
           myQuestions.map((question, index) => (
-            <Accordion key={index} className="w-full">
+            <Accordion key={index} className="w-full animate-fadeInSlideUp">
               <AccordionSummary
                 expandIcon={<ExpandMoreIcon />}
                 aria-controls={`panel${index}-content`}
@@ -120,6 +74,8 @@ const OwnerDashboard: React.FC<OwnerDashboardProps> = ({
                         startIcon={<QuestionAnswerIcon />}
                         variant="contained"
                         color="secondary"
+                        disabled={isSubmitting}
+                        loading={isSubmitting}
                         size="small"
                         onClick={() => submitAnswer(question)}
                         sx={{
@@ -154,9 +110,6 @@ const OwnerDashboard: React.FC<OwnerDashboardProps> = ({
         >
           Browse {showUnanwsered ? "unanwsered" : "anwsered"}
         </Button>
-
-        <span onClick={claimFreeToken}>test</span>
-        <span onClick={submitQuestion}>test2</span>
       </div>
     </div>
   );
