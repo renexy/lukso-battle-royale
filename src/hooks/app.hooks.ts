@@ -61,7 +61,7 @@ const { accounts, contextAccounts, provider, client, chainId } =
       return;
     }
 
-    await createProfileForUser(provider, accounts[0], client, chainId);
+    await createProfileForUser(accounts[0], client, chainId);
     setDisableInteractions(false);
   };
 

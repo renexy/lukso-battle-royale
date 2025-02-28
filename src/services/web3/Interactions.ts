@@ -43,7 +43,6 @@ export const hasProfile = async (provider: any, account: any, chainId: any) => {
 };
 
 export const createProfileForUser = async (
-  provider: any,
   account: any,
   client: any,
   chainId: any
