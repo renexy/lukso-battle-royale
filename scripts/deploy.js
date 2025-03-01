@@ -3,7 +3,7 @@ import hardhat from "hardhat";
 const { ethers } = hardhat;
 
 async function main() {
-    const deployerAddress = "0x61d397d2c872F521c0A0BCD13d1cb31ec2c8Bc05";
+    const deployerAddress = "0x6eeE943FD6314C7Ef86D2F78DeF6f0452EBB4dc8";
     console.log("Deploying contracts with the address:", deployerAddress);
 
     const profileOwnerAddress = deployerAddress;
