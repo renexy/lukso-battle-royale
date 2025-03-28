@@ -1,43 +1,32 @@
 import { CircularProgress } from "@mui/material";
-import UserDashboard from "./components/UserDashboard/Dashboard";
-import OwnerDashboard from "./components/OwnerDashboard/OwnerDashboard";
-import { useApp } from "./hooks/app.hooks";
-
+import { useUpProvider } from "./services/providers/UPProvider";
+import OwnerDashboard from "./components/OwnerDashboard";
+import TournamentEnder from "./utils/TournamentEnderWrapper";
 function App() {
+  const { accounts, contextAccounts } = useUpProvider();
 
-  const {
-    isUserOwner,
-    allQuestions,
-    ready,
-    disableInteractions,
-    loadQuestions,
-  } = useApp();
+  const isReady =
+    accounts &&
+    accounts.length > 0 &&
+    contextAccounts &&
+    contextAccounts.length > 0;
+  const isOwner =
+    isReady && contextAccounts[0].toLowerCase() === accounts[0].toLowerCase();
 
-  if (!ready) {
+  if (!isReady)
     return (
       <div className="flex flex-col h-full w-full gap-[14px] justify-center items-center">
+        <span>Login to continue</span>
         <CircularProgress color="secondary" />
       </div>
     );
-  }
 
-  if (isUserOwner) {
+  if (isOwner)
     return (
-      <div className="bg-white bg-opacity-95 shadow-lg p-5 rounded-lg h-[600px] w-[400px] relative">
-        <OwnerDashboard
-          questions={allQuestions ?? []}
-          disableInteractions={disableInteractions}
-          loadQuestions={loadQuestions}
-        />
-      </div>
+      <TournamentEnder>
+        <OwnerDashboard />
+      </TournamentEnder>
     );
-  }
-
-  return (
-    <div className="bg-white bg-opacity-95 shadow-lg p-5 rounded-lg h-[600px] w-[400px] relative">
-      <UserDashboard questions={allQuestions}></UserDashboard>
-    </div>
-  );
 }
 
 export default App;

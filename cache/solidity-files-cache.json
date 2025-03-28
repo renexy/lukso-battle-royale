@@ -938,6 +938,41 @@
       "artifacts": [
         "Context"
       ]
+    },
+    "C:\\work\\lukso\\luksoBattleRoyale\\contracts\\battleroyale.sol": {
+      "lastModificationDate": 1743167835029,
+      "contentHash": "95bb5db6132845573b16734c16d2a0eb",
+      "sourceName": "contracts/battleroyale.sol",
+      "solcConfig": {
+        "version": "0.8.19",
+        "settings": {
+          "optimizer": {
+            "enabled": false,
+            "runs": 200
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [],
+      "versionPragmas": [
+        "^0.8.19"
+      ],
+      "artifacts": [
+        "LYXRoyale"
+      ]
     }
   }
 }
