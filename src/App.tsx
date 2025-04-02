@@ -1,7 +1,6 @@
 import { CircularProgress } from "@mui/material";
 import { useUpProvider } from "./services/providers/UPProvider";
 import OwnerDashboard from "./components/OwnerDashboard";
-import TournamentEnder from "./utils/TournamentEnderWrapper";
 import TournamentOverview from "./components/TournamentOverview";
 function App() {
   const { accounts, contextAccounts } = useUpProvider();
