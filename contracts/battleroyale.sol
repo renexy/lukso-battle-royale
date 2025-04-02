@@ -3,6 +3,7 @@ pragma solidity ^0.8.19;
 
 contract LYXRoyale {
     struct Tournament {
+        uint256 id;
         address creator;
         uint256 entryFee;
         uint256 prizePool;
@@ -33,6 +34,11 @@ contract LYXRoyale {
         address indexed winner,
         uint256 prizeAmount
     );
+    event ParticipantJoined(
+        uint256 indexed tournamentId,
+        uint256 indexed tournamentPrizePool,
+        uint256 newEndTime
+    );
 
     constructor() {
         owner = msg.sender;
@@ -51,6 +57,7 @@ contract LYXRoyale {
 
         uint256 tournamentId = ++tournamentCount;
         tournaments[tournamentId] = Tournament({
+            id: tournamentId,
             creator: msg.sender,
             entryFee: _entryFee,
             prizePool: 0,
@@ -79,6 +86,27 @@ contract LYXRoyale {
         tournament.participants.push(msg.sender);
 
         tournaments[tournamentId].prizePool += msg.value;
+
+        uint256 randomSeed = uint256(
+            keccak256(
+                abi.encodePacked(
+                    block.timestamp,
+                    msg.sender,
+                    block.prevrandao,
+                    tournamentId,
+                    tournament.participants.length
+                )
+            )
+        );
+        uint256 randomDuration = 60 + (randomSeed % 241);
+
+        tournament.endTime += randomDuration;
+
+        emit ParticipantJoined(
+            tournamentId,
+            tournaments[tournamentId].prizePool,
+            tournament.endTime
+        );
     }
 
     function finalizeTournament(uint256 tournamentId) external {
@@ -137,6 +165,52 @@ contract LYXRoyale {
 
         emit ContractReserveUpdated(contractReserve);
         emit ReserveWithdrawn(owner, amount);
+    }
+
+    function getLeaderboard(
+        uint256 topN
+    ) external view returns (address[] memory, uint256[] memory) {
+        uint256 count = 0;
+        address[] memory players = new address[](topN);
+        uint256[] memory winnings = new uint256[](topN);
+
+        // Temporary array to store all leaderboard data
+        address[] memory allPlayers = new address[](tournamentCount);
+        uint256[] memory allWinnings = new uint256[](tournamentCount);
+
+        for (uint256 i = 1; i <= tournamentCount; i++) {
+            Tournament storage tournament = tournaments[i];
+
+            if (leaderboard[tournament.winner] > 0) {
+                allPlayers[count] = tournament.winner;
+                allWinnings[count] = leaderboard[tournament.winner];
+                count++;
+            }
+        }
+
+        // Sort by winnings (Bubble sort for simplicity, but you may optimize this)
+        for (uint256 i = 0; i < count; i++) {
+            for (uint256 j = i + 1; j < count; j++) {
+                if (allWinnings[i] < allWinnings[j]) {
+                    (allWinnings[i], allWinnings[j]) = (
+                        allWinnings[j],
+                        allWinnings[i]
+                    );
+                    (allPlayers[i], allPlayers[j]) = (
+                        allPlayers[j],
+                        allPlayers[i]
+                    );
+                }
+            }
+        }
+
+        // Populate topN results
+        for (uint256 i = 0; i < topN && i < count; i++) {
+            players[i] = allPlayers[i];
+            winnings[i] = allWinnings[i];
+        }
+
+        return (players, winnings);
     }
 
     receive() external payable {}

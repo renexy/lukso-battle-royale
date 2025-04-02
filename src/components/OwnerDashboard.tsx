@@ -1,4 +1,3 @@
-import { Button } from "@mui/material";
 import { useState } from "react";
 import CreateTournament from "./CreateTournament";
 import TournamentOverview from "./TournamentOverview";
@@ -7,12 +6,17 @@ import TournamentOverview from "./TournamentOverview";
 interface OwnerDashboardProps {}
 
 const OwnerDashboard: React.FC<OwnerDashboardProps> = () => {
-  const [pageState, setPageState] = useState<"overview" | "create">("overview");
+  const [pageState, setPageState] = useState<
+    "overview" | "create"
+  >("overview");
   return (
     <>
       {pageState === "overview" && (
         <TournamentOverview
-          setPageState={(state: "overview" | "create") => setPageState(state)}
+          setPageState={(state: "overview" | "create") =>
+            setPageState(state)
+          }
+          isOwner={true}
         />
       )}
 

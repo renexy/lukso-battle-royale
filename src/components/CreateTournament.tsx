@@ -36,7 +36,7 @@ const CreateTournament: React.FC<CreateTournamentProps> = ({ goBack }) => {
       contextAccounts[0],
       chainId,
       client,
-      formData.entryFee,
+      formData.entryFee.toString(),
       formData.duration * 3600
     );
 
@@ -44,7 +44,7 @@ const CreateTournament: React.FC<CreateTournamentProps> = ({ goBack }) => {
       toast.error("Failed");
       setTournamentCreating(false);
     } else {
-      goBack()
+      goBack();
       toast.success("Success");
     }
   };
@@ -64,45 +64,45 @@ const CreateTournament: React.FC<CreateTournamentProps> = ({ goBack }) => {
     w-[500px] relative animate-fadeInSlideUp justify-center items-center flex flex-col justify-between"
     >
       {tournamentCreating ? (
-        <div
-          className="relative animate-fadeInSlideUp justify-center items-center flex flex-col justify-center gap-[20px]"
-        >
+        <div className="relative animate-fadeInSlideUp justify-center items-center flex flex-col justify-center gap-[20px]">
           <span>Creating tournament...</span>
           <CircularProgress color="secondary" />
         </div>
       ) : (
-        <form onSubmit={handleSubmit} className="flex flex-col gap-3 w-full">
-          <TextField
-            label="Entry Fee (LYX)"
-            variant="outlined"
-            type="number"
-            fullWidth
-            color="secondary"
-            name="entryFee"
-            value={formData.entryFee}
-            onChange={handleChange}
-          />
+        <>
+          <form onSubmit={handleSubmit} className="flex flex-col gap-3 w-full">
+            <TextField
+              label="Entry Fee (LYX)"
+              variant="outlined"
+              type="number"
+              fullWidth
+              color="secondary"
+              name="entryFee"
+              value={formData.entryFee}
+              onChange={handleChange}
+            />
 
-          <TextField
-            label="End Time Duration (hours)"
-            variant="outlined"
-            color="secondary"
-            type="number"
-            fullWidth
-            name="duration"
-            value={formData.duration}
-            inputProps={{ step: 1, max: 36, min: 0 }}
-            onChange={handleChange}
-          />
+            <TextField
+              label="End Time Duration (hours)"
+              variant="outlined"
+              color="secondary"
+              type="number"
+              fullWidth
+              name="duration"
+              value={formData.duration}
+              inputProps={{ step: 1, max: 36, min: 0 }}
+              onChange={handleChange}
+            />
 
-          <Button type="submit" variant="contained" color="secondary">
-            Create Tournament! ⚔️
+            <Button type="submit" variant="contained" color="secondary">
+              Create Tournament! ⚔️
+            </Button>
+          </form>
+          <Button variant="contained" color="secondary" onClick={goBack}>
+            Or go back
           </Button>
-        </form>
+        </>
       )}
-      <Button variant="contained" color="secondary" onClick={goBack}>
-        Or go back
-      </Button>
     </div>
   );
 };
